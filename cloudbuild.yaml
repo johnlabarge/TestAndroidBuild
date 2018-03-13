@@ -1,7 +1,7 @@
 steps:
 #Copy the build cache locally, if it exists.
 - name: 'gcr.io/cloud-builders/gsutil'
-  args: ['rsync', '${_GRADLE_BUILD_CACHE}/', '/build_cache']
+  args: ['rsync', '${_ANDROID_BUILD_CACHE}/', '/build_cache']
   id: copy_build_cache_local
   volumes:
     - name: 'build_cache'
@@ -12,8 +12,6 @@ steps:
   id: gradle_build
   waitFor:
     - copy_build_cache_local
-    - copy_signing_files
-    - copy_fabric_files
   volumes:
     - name: 'build_cache'
       path: '/build_cache'
@@ -24,7 +22,7 @@ steps:
     - gradle_build
 #Repopulate the build-cache
 - name: 'gcr.io/cloud-builders/gsutil'
-  args: ['-q','cp', '/build_cache/dot_gradle.zip', '${_GRADLE_BUILD_CACHE}']
+  args: ['-q','cp', '/build_cache/dot_gradle.zip', '${_ANDROID_BUILD_CACHE}']
   waitFor:
     - gradle_build
   volumes:
